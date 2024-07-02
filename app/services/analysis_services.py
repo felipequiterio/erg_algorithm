@@ -13,6 +13,7 @@ def calculate_angle(a, b, c):
     angle = np.arccos(cosine_angle)
     return np.degrees(angle)
 
+# -------------------------- REFACTOR --------------------------------
 
 def determine_phase(angles, landmarks):
     trunk_leg = angles['trunk_leg']
@@ -29,6 +30,7 @@ def determine_phase(angles, landmarks):
     else:
         return 'Recovery'
 
+# -------------------------- REFACTOR --------------------------------
 
 def get_phase_color(phase):
 

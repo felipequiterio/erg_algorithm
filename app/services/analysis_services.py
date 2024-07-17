@@ -46,37 +46,26 @@ def determine_phase(reference_angles, landmarks):
         else:
             return angle_left
     
-    # Instancing reference_angles from dict to variables
-    right_shoulder = reference_angles['RIGHT_SHOULDER']['angle']
-    left_shoulder = reference_angles['LEFT_SHOULDER']['angle']
+    # Getting most visible angle
+    shoulder = get_visible_angle(reference_angles['shoulder']['right']['angle'], 
+                                 reference_angles['shoulder']['left']['angle'], 
+                                 reference_angles['shoulder']['right']['visibility'], 
+                                 reference_angles['shoulder']['left']['visibility'])
     
-    right_hip = reference_angles['RIGHT_HIP']['angle']
-    left_hip = reference_angles['LEFT_HIP']['angle']
+    hip      = get_visible_angle(reference_angles['hip']['right']['angle'], 
+                                 reference_angles['hip']['left']['angle'], 
+                                 reference_angles['hip']['right']['visibility'], 
+                                 reference_angles['hip']['left']['visibility'])
     
-    right_elbow = reference_angles['RIGHT_ELBOW']['angle']
-    left_elbow = reference_angles['LEFT_ELBOW']['angle']
+    elbow    = get_visible_angle(reference_angles['elbow']['right']['angle'], 
+                                 reference_angles['elbow']['left']['angle'], 
+                                 reference_angles['elbow']['right']['visibility'], 
+                                 reference_angles['elbow']['left']['visibility'])
     
-    right_knee = reference_angles['RIGHT_KNEE']['angle']
-    left_knee = reference_angles['LEFT_KNEE']['angle']
-    
-    # Getting visibility from landmarks
-    visibility_right_shoulder = landmarks[12].visibility
-    visibility_left_shoulder = landmarks[11].visibility
-    
-    visibility_right_hip = landmarks[24].visibility
-    visibility_left_hip = landmarks[23].visibility
-    
-    visibility_right_elbow = landmarks[14].visibility
-    visibility_left_elbow = landmarks[13].visibility
-    
-    visibility_right_knee = landmarks[26].visibility
-    visibility_left_knee = landmarks[25].visibility
-    
-    # Getting most visible angle from 
-    shoulder = get_visible_angle(right_shoulder, left_shoulder, visibility_right_shoulder, visibility_left_shoulder)
-    hip = get_visible_angle(right_hip, left_hip, visibility_right_hip, visibility_left_hip)
-    elbow = get_visible_angle(right_elbow, left_elbow, visibility_right_elbow, visibility_left_elbow)
-    knee = get_visible_angle(right_knee, left_knee, visibility_right_knee, visibility_left_knee)
+    knee     = get_visible_angle(reference_angles['knee']['right']['angle'], 
+                                 reference_angles['knee']['left']['angle'], 
+                                 reference_angles['knee']['right']['visibility'], 
+                                 reference_angles['knee']['left']['visibility'])
     
     # Determine phase from angle comparison
     if elbow < CATCH_ELBOW and knee < CATCH_KNEE and hip < CATCH_HIP:

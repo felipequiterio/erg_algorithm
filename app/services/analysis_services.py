@@ -14,45 +14,52 @@ def calculate_angle(a, b, c):
     return np.degrees(angle)
 
 # -------------------------- REFACTOR --------------------------------
-def determine_phase(angles, landmarks):
-    # Definindo os ângulos para as fases
-    CATCH_ELBOW = 90
-    CATCH_KNEE = 90
-    CATCH_HIP = 90
+def determine_phase(reference_angles, landmarks):
 
-    DRIVE_ELBOW_MIN = 90
-    DRIVE_ELBOW_MAX = 180
-    DRIVE_KNEE = 90
-    DRIVE_HIP = 90
+    # Catch angle limits
+    CATCH_ELBOW = 10
+    CATCH_KNEE = 45
+    CATCH_HIP = 45
 
-    FINISH_ELBOW = 90
-    FINISH_KNEE = 90
-    FINISH_HIP_MIN = 90
-    FINISH_HIP_MAX = 180
+    # Drive angle limits
+    DRIVE_ELBOW_MAX = 30
+    DRIVE_KNEE_MIN = 150
+    DRIVE_HIP_MAX = 90
 
-    RECOVERY_ELBOW_MIN = 90
-    RECOVERY_ELBOW_MAX = 180
-    RECOVERY_KNEE = 90
+    # Finish angle limits
+    FINISH_ELBOW_MIN = 30
+    FINISH_ELBOW_MAX = 50
+    FINISH_KNEE = 120
+    FINISH_HIP_MIN = 80
+    FINISH_HIP_MAX = 110
+
+    # Recovery angle limits
+    RECOVERY_ELBOW_MAX = 20
+    RECOVERY_KNEE_MIN = 30
+    RECOVERY_KNEE_MAX = 140
     RECOVERY_HIP = 90
 
+    # Function to get most visible angle from prediction
     def get_visible_angle(angle_right, angle_left, visibility_right, visibility_left):
         if visibility_right > visibility_left:
             return angle_right
         else:
             return angle_left
     
-    right_shoulder = angles['RIGHT_SHOULDER']
-    left_shoulder = angles['LEFT_SHOULDER']
+    # Instancing reference_angles from dict to variables
+    right_shoulder = reference_angles['RIGHT_SHOULDER']['angle']
+    left_shoulder = reference_angles['LEFT_SHOULDER']['angle']
     
-    right_hip = angles['RIGHT_HIP']
-    left_hip = angles['LEFT_HIP']
+    right_hip = reference_angles['RIGHT_HIP']['angle']
+    left_hip = reference_angles['LEFT_HIP']['angle']
     
-    right_elbow = angles['RIGHT_ELBOW']
-    left_elbow = angles['LEFT_ELBOW']
+    right_elbow = reference_angles['RIGHT_ELBOW']['angle']
+    left_elbow = reference_angles['LEFT_ELBOW']['angle']
     
-    right_knee = angles['RIGHT_KNEE']
-    left_knee = angles['LEFT_KNEE']
+    right_knee = reference_angles['RIGHT_KNEE']['angle']
+    left_knee = reference_angles['LEFT_KNEE']['angle']
     
+    # Getting visibility from landmarks
     visibility_right_shoulder = landmarks[12].visibility
     visibility_left_shoulder = landmarks[11].visibility
     
@@ -65,22 +72,26 @@ def determine_phase(angles, landmarks):
     visibility_right_knee = landmarks[26].visibility
     visibility_left_knee = landmarks[25].visibility
     
+    # Getting most visible angle from 
     shoulder = get_visible_angle(right_shoulder, left_shoulder, visibility_right_shoulder, visibility_left_shoulder)
     hip = get_visible_angle(right_hip, left_hip, visibility_right_hip, visibility_left_hip)
     elbow = get_visible_angle(right_elbow, left_elbow, visibility_right_elbow, visibility_left_elbow)
     knee = get_visible_angle(right_knee, left_knee, visibility_right_knee, visibility_left_knee)
     
-    # Determinando a fase
+    # Determine phase from angle comparison
     if elbow < CATCH_ELBOW and knee < CATCH_KNEE and hip < CATCH_HIP:
         return 'Catch'
-    elif DRIVE_ELBOW_MIN < elbow < DRIVE_ELBOW_MAX and knee < DRIVE_KNEE and hip < DRIVE_HIP:
+    
+    if elbow < DRIVE_ELBOW_MAX and knee < DRIVE_KNEE_MIN and hip < DRIVE_HIP_MAX:
         return 'Drive'
-    elif elbow > FINISH_ELBOW and knee > FINISH_KNEE and FINISH_HIP_MIN < hip < FINISH_HIP_MAX:
+    
+    if FINISH_ELBOW_MAX > elbow > FINISH_ELBOW_MIN and knee > FINISH_KNEE and FINISH_HIP_MIN < hip < FINISH_HIP_MAX:
         return 'Finish'
-    elif RECOVERY_ELBOW_MIN < elbow < RECOVERY_ELBOW_MAX and knee < RECOVERY_KNEE and hip > RECOVERY_HIP:
+    
+    if elbow < RECOVERY_ELBOW_MAX and RECOVERY_KNEE_MIN < knee < RECOVERY_KNEE_MAX and hip < RECOVERY_HIP:
         return 'Recovery'
-    else:
-        return 'Unlabeled'
+    
+    return 'Unlabeled'
 
 # -------------------------- REFACTOR --------------------------------
 

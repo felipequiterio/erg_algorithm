@@ -47,7 +47,6 @@ def process_video(video_path: str, output_path: str):
             # Getting body landmarks (connections) from landmarks
             body_landmarks = {i: landmarks[i] for i in range(len(landmarks)) if i not in range(0, 11)}
             
-            
             # Comparing shoulder and ankle direction for algorithm calibration
             # shoulder.x and anlke.x
             if landmarks[12].x > landmarks[28].x:
@@ -55,54 +54,65 @@ def process_video(video_path: str, output_path: str):
             
             if landmarks[12].x < landmarks[28].x:
                 cv2.putText(frame, '0-', (400, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (1,1,1), 2, cv2.LINE_AA)
-                
-            # Reference angles
-            # angles = {
-            #     'RIGHT_SHOULDER': calculate_angle(landmarks[14], landmarks[12], landmarks[24]),
-            #     'LEFT_SHOULDER': calculate_angle(landmarks[13], landmarks[11], landmarks[23]),
-            #     'RIGHT_HIP': calculate_angle(landmarks[12], landmarks[24], landmarks[25]),
-            #     'LEFT_HIP': calculate_angle(landmarks[11], landmarks[23], landmarks[26]),
-            #     'RIGHT_ELBOW': calculate_angle(landmarks[14], landmarks[12], landmarks[16]),
-            #     'LEFT_ELBOW': calculate_angle(landmarks[13], landmarks[11], landmarks[15]),
-            #     'RIGHT_KNEE': calculate_angle(landmarks[24], landmarks[26], landmarks[28]),
-            #     'LEFT_KNEE': calculate_angle(landmarks[23], landmarks[25], landmarks[27]),
-            # }
-            # Reference angles and visibility
-            reference_angles = {
-                'RIGHT_SHOULDER': {
-                    'angle': calculate_angle(landmarks[14], landmarks[12], landmarks[24]),
-                    'visibility': landmarks[12].visibility
-                },
-                'LEFT_SHOULDER': {
-                    'angle': calculate_angle(landmarks[13], landmarks[11], landmarks[23]),
-                    'visibility': landmarks[11].visibility
-                },
-                'RIGHT_HIP': {
-                    'angle': calculate_angle(landmarks[12], landmarks[24], landmarks[25]),
-                    'visibility': landmarks[24].visibility
-                },
-                'LEFT_HIP': {
-                    'angle': calculate_angle(landmarks[11], landmarks[23], landmarks[26]),
-                    'visibility': landmarks[23].visibility
-                },
-                'RIGHT_ELBOW': {
-                    'angle': calculate_angle(landmarks[14], landmarks[12], landmarks[16]),
-                    'visibility': landmarks[14].visibility
-                },
-                'LEFT_ELBOW': {
-                    'angle': calculate_angle(landmarks[13], landmarks[11], landmarks[15]),
-                    'visibility': landmarks[13].visibility
-                },
-                'RIGHT_KNEE': {
-                    'angle': calculate_angle(landmarks[24], landmarks[26], landmarks[28]),
-                    'visibility': landmarks[26].visibility
-                },
-                'LEFT_KNEE': {
-                    'angle': calculate_angle(landmarks[23], landmarks[25], landmarks[27]),
-                    'visibility': landmarks[25].visibility
-                }
-            }
 
+            # Reference angles object
+            reference_angles = {
+                'shoulder':{
+                    
+                    'right': {
+                        'angle': calculate_angle(landmarks[14], landmarks[12], landmarks[24]),
+                        'visibility': landmarks[12].visibility,
+                        'node': landmarks[12]
+                    },
+                    'left': {
+                        'angle': calculate_angle(landmarks[13], landmarks[11], landmarks[23]),
+                        'visibility': landmarks[11].visibility,
+                        'node': landmarks[11]
+                    },
+                },
+                
+                'hip':{
+                    
+                    'right': {
+                        'angle': calculate_angle(landmarks[12], landmarks[24], landmarks[25]),
+                        'visibility': landmarks[24].visibility,
+                        'node': landmarks[24]
+                    },
+                    'left': {
+                        'angle': calculate_angle(landmarks[11], landmarks[23], landmarks[26]),
+                        'visibility': landmarks[23].visibility,
+                        'node': landmarks[23]
+                    },
+                },
+                
+                'elbow': {
+                    
+                    'right': {
+                        'angle': calculate_angle(landmarks[14], landmarks[12], landmarks[16]),
+                        'visibility': landmarks[14].visibility,
+                        'node': landmarks[14]
+                    },
+                    'left': {
+                        'angle': calculate_angle(landmarks[13], landmarks[11], landmarks[15]),
+                        'visibility': landmarks[13].visibility,
+                        'node': landmarks[13]
+                    },
+                },
+                
+                'knee': {
+                    'right': {
+                        'angle': calculate_angle(landmarks[24], landmarks[26], landmarks[28]),
+                        'visibility': landmarks[26].visibility,
+                        'node': landmarks[26]
+                    },
+                    'left': {
+                        'angle': calculate_angle(landmarks[23], landmarks[25], landmarks[27]),
+                        'visibility': landmarks[25].visibility,
+                        'node': landmarks[25]
+                    }
+                },
+            }
+            
             # Getting phase from angles and landmarks
             phase = determine_phase(reference_angles, landmarks)
             
@@ -114,14 +124,14 @@ def process_video(video_path: str, output_path: str):
             draw_landmarks(frame, body_landmarks, mp_pose.POSE_CONNECTIONS, color)
 
             # Draw angles
-            draw_angle(frame, landmarks[24], landmarks[12], landmarks[26], reference_angles['RIGHT_SHOULDER']['angle'], color)
-            draw_angle(frame, landmarks[23], landmarks[11], landmarks[25], reference_angles['LEFT_SHOULDER']['angle'], color)
-            draw_angle(frame, landmarks[12], landmarks[24], landmarks[26], reference_angles['RIGHT_HIP']['angle'], color)
-            draw_angle(frame, landmarks[11], landmarks[23], landmarks[25], reference_angles['LEFT_HIP']['angle'], color)
-            draw_angle(frame, landmarks[24], landmarks[26], landmarks[28], reference_angles['RIGHT_KNEE']['angle'], color)
-            draw_angle(frame, landmarks[23], landmarks[25], landmarks[27], reference_angles['LEFT_KNEE']['angle'], color)
-            draw_angle(frame, landmarks[11], landmarks[13], landmarks[15], reference_angles['LEFT_ELBOW']['angle'], color)
-            draw_angle(frame, landmarks[12], landmarks[14], landmarks[16], reference_angles['RIGHT_ELBOW']['angle'], color)
+            # draw_angle(frame, landmarks[24], landmarks[12], landmarks[26], reference_angles['RIGHT_SHOULDER']['angle'], color)
+            # draw_angle(frame, landmarks[23], landmarks[11], landmarks[25], reference_angles['LEFT_SHOULDER']['angle'], color)
+            # draw_angle(frame, landmarks[12], landmarks[24], landmarks[26], reference_angles['RIGHT_HIP']['angle'], color)
+            # draw_angle(frame, landmarks[11], landmarks[23], landmarks[25], reference_angles['LEFT_HIP']['angle'], color)
+            # draw_angle(frame, landmarks[24], landmarks[26], landmarks[28], reference_angles['RIGHT_KNEE']['angle'], color)
+            # draw_angle(frame, landmarks[23], landmarks[25], landmarks[27], reference_angles['LEFT_KNEE']['angle'], color)
+            # draw_angle(frame, landmarks[11], landmarks[13], landmarks[15], reference_angles['LEFT_ELBOW']['angle'], color)
+            # draw_angle(frame, landmarks[12], landmarks[14], landmarks[16], reference_angles['RIGHT_ELBOW']['angle'], color)
 
             # Calculating movement
             if prev_landmarks is not None and prev_time is not None:

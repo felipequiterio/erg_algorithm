@@ -1,5 +1,0 @@
-=> Refactor phase determination function
-
-=> Create git ignore
-
-=> 
